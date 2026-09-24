@@ -48,6 +48,7 @@ services:
         chown -R root:root config/certs;
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
+        chmod -R o+rX config/certs;
         echo "Waiting for Elasticsearch availability";
         until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         echo "Setting kibana_system password";
@@ -220,12 +221,25 @@ services:
       retries: 120
     
   logstash:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+      es03:
+        condition: service_healthy
     image: docker.elastic.co/logstash/logstash:9.5.4
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
-      - pipeline:/usr/share/logstash/pipeline/
-      - settings:/usr/share/logstash/config/settings
+      - ./logstash-pipeline/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash-pipeline/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+    ports:
+      - "5044:5044"     # Beats (Filebeat/Winlogbeat)
+      - "5514:5514/udp" # Syslog UDP
+      - "5514:5514/tcp" # Syslog TCP
+      - "5000:5000"     # JSON customizado
     environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - pipeline.workers=5
       - monitoring.elasticsearch.hosts=https://es01:9200
       - api.http.host=127.0.0.1

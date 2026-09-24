@@ -1,0 +1,5 @@
+# Logstash processa todos os .conf da pasta pipeline/ em ordem alfabética
+# e os concatena como se fossem um único arquivo (por isso o prefixo 01-,02-...)
+- pipeline.id: main
+  path.config: "/usr/share/logstash/pipeline/*.conf"
+  pipeline.workers: 2
