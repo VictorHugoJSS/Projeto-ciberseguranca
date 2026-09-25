@@ -237,7 +237,7 @@ services:
       - "5044:5044"     # Beats (Filebeat/Winlogbeat)
       - "5514:5514/udp" # Syslog UDP
       - "5514:5514/tcp" # Syslog TCP
-      - "5000:5000"     # JSON customizado
+#      - "5000:5000"     # JSON customizado
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - pipeline.workers=5
