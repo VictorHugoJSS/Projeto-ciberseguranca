@@ -14,6 +14,8 @@ Tudo é enviado como syslog (RFC3164-like) para a porta do Logstash
 Uso básico:
     python3 simulate_bruteforce.py --attacker-ip 203.0.113.50 --attempts 8
 
+    python3 simulate_bruteforce.py --attacker-ip 198.51.100.25 --attempts 12
+
 Uso "cheio", com bastante ruído de fundo intercalado:
     python3 simulate_bruteforce.py \
         --attacker-ip 203.0.113.50 \
